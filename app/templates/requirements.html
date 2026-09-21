@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Requirements · CapstoneFlow{% endblock %}
+
+{% block content %}
+<section class="page-heading requirements-heading">
+    <div>
+        <span class="eyebrow">R2 + R3 implementation</span>
+        <h1>Requirements workspace</h1>
+        <p class="muted">Plan, prioritize, filter, and inspect the requirements stored in CapstoneFlow.</p>
+    </div>
+
+    {% if session.get("role") == "Student" %}
+    <a class="button button-primary button-link" href="{{ url_for('main.requirement_create') }}">
+        <span>+</span> New requirement
+    </a>
+    {% else %}
+    <span class="role-pill"><span class="role-dot"></span>Read-only reviewer view</span>
+    {% endif %}
+</section>
+
+<section class="requirements-toolbar">
+    <form method="get" class="filter-form">
+        <div>
+            <label for="checkpoint">Checkpoint</label>
+            <select id="checkpoint" name="checkpoint">
+                <option value="">All checkpoints</option>
+                {% for checkpoint in checkpoints %}
+                <option value="{{ checkpoint }}" {{ 'selected' if selected_checkpoint == checkpoint else '' }}>{{ checkpoint }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+                <option value="">All priorities</option>
+                {% for priority in priorities %}
+                <option value="{{ priority }}" {{ 'selected' if selected_priority == priority else '' }}>{{ priority }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button class="button button-secondary filter-button" type="submit">Apply filters</button>
+        <a class="filter-reset" href="{{ url_for('main.requirements') }}">Reset</a>
+    </form>
+
+    <div class="result-count">
+        <strong>{{ requirements|length }}</strong>
+        <span>stored requirements</span>
+    </div>
+</section>
+
+<section class="requirement-card-grid">
+    {% for requirement in requirements %}
+    <article class="requirement-card">
+        <div class="requirement-card-top">
+            <div class="requirement-code-wrap">
+                <span class="requirement-id requirement-id-large">{{ requirement['code'] }}</span>
+                <div>
+                    <span class="checkpoint-label">{{ requirement['checkpoint'] }}</span>
+                    <h2>{{ requirement['title'] }}</h2>
+                </div>
+            </div>
+            <span class="priority-chip priority-{{ requirement['priority']|lower }}">{{ requirement['priority'] }}</span>
+        </div>
+
+        <p class="requirement-description">
+            {{ requirement['description'] or 'No description added yet.' }}
+        </p>
+
+        <div class="acceptance-box">
+            <span>Acceptance criteria</span>
+            <p>{{ requirement['acceptance_criteria'] }}</p>
+        </div>
+
+        <div class="requirement-meta">
+            <span class="tag">{{ requirement['status'] }}</span>
+            <span class="meta-item">{{ 'Required' if requirement['required'] else 'Optional' }}</span>
+            <span class="meta-item">{{ 'Evidence linked' if requirement['evidence_url'] else 'Evidence missing' }}</span>
+            {% if requirement['blocking_feedback'] %}
+            <span class="meta-item meta-warning">Blocking feedback</span>
+            {% endif %}
+        </div>
+
+        {% if session.get("role") == "Student" %}
+        <div class="requirement-card-actions">
+            <a class="text-action" href="{{ url_for('main.requirement_edit', requirement_id=requirement['id']) }}">Edit requirement →</a>
+        </div>
+        {% endif %}
+    </article>
+    {% else %}
+    <div class="empty-state">
+        <span class="empty-icon">⌁</span>
+        <h2>No requirements match these filters.</h2>
+        <p>Reset the filters or create a new requirement.</p>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}
