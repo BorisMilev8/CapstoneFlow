@@ -1,6 +1,4 @@
-DROP TABLE IF EXISTS requirements;
-
-CREATE TABLE requirements (
+CREATE TABLE IF NOT EXISTS requirements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT NOT NULL UNIQUE,
     title TEXT NOT NULL,
@@ -16,3 +14,9 @@ CREATE TABLE requirements (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_requirements_checkpoint
+ON requirements(checkpoint);
+
+CREATE INDEX IF NOT EXISTS idx_requirements_priority
+ON requirements(priority);
