@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}CapstoneFlow{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='requirements.css') }}">
 </head>
 <body>
     <header class="topbar">
@@ -17,14 +18,21 @@
         </a>
 
         {% if session.get("user_email") %}
-        <div class="account">
-            <div>
-                <strong>{{ session.get("display_name") }}</strong>
-                <small>{{ session.get("role") }}</small>
+        <div class="topbar-actions">
+            <nav class="app-nav" aria-label="Application navigation">
+                <a class="{{ 'nav-active' if request.endpoint == 'main.dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                <a class="{{ 'nav-active' if request.endpoint in ('main.requirements', 'main.requirement_create', 'main.requirement_edit') else '' }}" href="{{ url_for('main.requirements') }}">Requirements</a>
+            </nav>
+
+            <div class="account">
+                <div>
+                    <strong>{{ session.get("display_name") }}</strong>
+                    <small>{{ session.get("role") }}</small>
+                </div>
+                <form method="post" action="{{ url_for('main.logout') }}">
+                    <button class="button button-quiet" type="submit">Sign out</button>
+                </form>
             </div>
-            <form method="post" action="{{ url_for('main.logout') }}">
-                <button class="button button-quiet" type="submit">Sign out</button>
-            </form>
         </div>
         {% endif %}
     </header>
