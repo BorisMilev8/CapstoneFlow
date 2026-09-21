@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In · CapstoneFlow{% endblock %}
+
+{% block content %}
+<section class="auth-layout">
+    <div class="auth-copy">
+        <span class="eyebrow">Fall 2026 · SENG 701</span>
+        <h1>Keep capstone work connected from requirement to evidence.</h1>
+        <p>
+            CapstoneFlow brings requirements, checkpoint evidence, weekly status,
+            and reviewer feedback into one reviewable workflow.
+        </p>
+
+        <div class="feature-list">
+            <div><strong>Traceable</strong><span>Connect each requirement to evidence and feedback.</span></div>
+            <div><strong>Explainable</strong><span>See why a checkpoint is or is not ready.</span></div>
+            <div><strong>Protected</strong><span>Project pages require an authenticated session.</span></div>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <span class="eyebrow">Development build</span>
+        <h2>Sign in</h2>
+        <p class="muted">Use one of the fictional demo accounts below.</p>
+
+        <form method="post" class="stack">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="username" required>
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+            <button class="button button-primary button-full" type="submit">Sign In</button>
+        </form>
+
+        <div class="demo-box">
+            <strong>Student demo</strong>
+            <code>student@capstoneflow.local</code>
+            <code>Student123!</code>
+        </div>
+
+        <div class="demo-box">
+            <strong>Reviewer demo</strong>
+            <code>reviewer@capstoneflow.local</code>
+            <code>Reviewer123!</code>
+        </div>
+
+        <p class="fine-print">
+            These credentials are for local development only. Production authentication
+            and university SSO are outside the current proposal scope.
+        </p>
+    </div>
+</section>
+{% endblock %}
