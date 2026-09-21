@@ -1,12 +1,23 @@
 # Test suite
 
-This directory is reserved for automated and acceptance tests.
+CapstoneFlow uses pytest with Flask's test client.
 
-Planned test categories:
+## Implemented coverage
 
-- unit tests for readiness calculations
-- model and persistence tests
-- authorization and cross-project access tests
-- form validation tests
-- integration tests for student/reviewer workflows
-- acceptance tests mapped to R1–R12
+- sign-in page loads
+- dashboard redirects unauthenticated visitors
+- valid student sign-in
+- valid reviewer sign-in and session-backed role
+- invalid-password rejection
+- logout clears the authenticated session
+- readiness requires Complete + evidence + no blocking feedback
+- optional items do not affect the readiness denominator
+- zero required items return Not configured
+
+Run all tests from the repository root:
+
+```bash
+pytest
+```
+
+Future tests will cover SQLite persistence, project membership, cross-project authorization, requirement forms, evidence validation, weekly reports, reviewer feedback, and full R1–R12 acceptance flows.
