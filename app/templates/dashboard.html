@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · CapstoneFlow{% endblock %}
+
+{% block content %}
+<section class="dashboard-heading">
+    <div>
+        <span class="eyebrow">{{ project.semester }} · {{ project.checkpoint }} checkpoint</span>
+        <h1>{{ project.title }}</h1>
+        <p class="muted">A requirement-to-evidence view of current checkpoint readiness.</p>
+    </div>
+    <div class="role-pill">{{ session.get("role") }} workspace</div>
+</section>
+
+<section class="metric-grid">
+    <article class="metric-card">
+        <span>Checkpoint readiness</span>
+        {% if readiness.configured %}
+            <strong>{{ readiness.readiness_percent }}%</strong>
+            <small>{{ readiness.ready_count }} of {{ readiness.required_count }} required items ready</small>
+        {% else %}
+            <strong>—</strong>
+            <small>Not configured</small>
+        {% endif %}
+    </article>
+
+    <article class="metric-card">
+        <span>Missing evidence</span>
+        <strong>{{ readiness.missing_evidence_count }}</strong>
+        <small>Required items without an evidence link</small>
+    </article>
+
+    <article class="metric-card">
+        <span>Blocking feedback</span>
+        <strong>{{ readiness.blocking_feedback_count }}</strong>
+        <small>Open blockers preventing readiness</small>
+    </article>
+
+    <article class="metric-card">
+        <span>Overdue incomplete</span>
+        <strong>{{ readiness.overdue_incomplete_count }}</strong>
+        <small>Required items past due and not complete</small>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <span class="eyebrow">Current scope</span>
+            <h2>Required items</h2>
+        </div>
+        <span class="status-key">Ready = Complete + evidence + no blocking feedback</span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Requirement</th>
+                    <th>Status</th>
+                    <th>Evidence</th>
+                    <th>Blocking feedback</th>
+                    <th>Readiness</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                {% set is_ready = item.status == "Complete" and item.evidence_links and not item.open_blocking_feedback %}
+                <tr>
+                    <td><strong>{{ item.id }}</strong></td>
+                    <td>{{ item.title }}</td>
+                    <td><span class="tag">{{ item.status }}</span></td>
+                    <td>{{ item.evidence_links|length }}</td>
+                    <td>{{ "Open" if item.open_blocking_feedback else "None" }}</td>
+                    <td>
+                        <span class="tag {{ 'tag-ready' if is_ready else 'tag-attention' }}">
+                            {{ "Ready" if is_ready else "Needs attention" }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="panel next-panel">
+    <div>
+        <span class="eyebrow">Next action</span>
+        <h2>Resolve R3 evidence and feedback</h2>
+        <p>
+            R3 is marked Complete, but it does not count as ready because it has no
+            evidence link and still has open blocking feedback.
+        </p>
+    </div>
+    <span class="callout">The readiness percentage is a workflow aid, not a grade or faculty approval.</span>
+</section>
+{% endblock %}
