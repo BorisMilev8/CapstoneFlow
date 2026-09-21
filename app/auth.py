@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import redirect, session, url_for
+from flask import abort, redirect, session, url_for
 
 
 def login_required(view):
@@ -13,3 +13,19 @@ def login_required(view):
         return view(*args, **kwargs)
 
     return wrapped_view
+
+
+def role_required(*allowed_roles):
+    """Require the signed-in user to have one of the supplied roles."""
+
+    def decorator(view):
+        @wraps(view)
+        @login_required
+        def wrapped_view(*args, **kwargs):
+            if session.get("role") not in allowed_roles:
+                abort(403)
+            return view(*args, **kwargs)
+
+        return wrapped_view
+
+    return decorator
