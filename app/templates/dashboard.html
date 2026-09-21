@@ -10,6 +10,7 @@
             <div class="hero-topline">
                 <span class="hero-badge">{{ project.semester }}</span>
                 <span class="hero-badge hero-badge-soft">{{ project.checkpoint }} checkpoint</span>
+                <a class="dashboard-manage-link" href="{{ url_for('main.requirements', checkpoint=project.checkpoint) }}">Manage requirements →</a>
             </div>
             <h1>{{ project.title }}</h1>
             <p>From requirement to evidence, keep every checkpoint decision visible and explainable.</p>
@@ -55,7 +56,7 @@
     <div>
         <span class="eyebrow">Live checkpoint view</span>
         <h2>Your project pulse</h2>
-        <p class="muted">The numbers below explain what is affecting readiness right now.</p>
+        <p class="muted">The numbers below are calculated from the stored Alpha requirements.</p>
     </div>
     <div class="role-pill"><span class="role-dot"></span>{{ session.get("role") }} workspace</div>
 </section>
@@ -143,6 +144,10 @@
                             </span>
                         </td>
                     </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No Alpha requirements are configured.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -150,18 +155,26 @@
     </section>
 
     <aside class="insight-panel">
+        {% if next_attention %}
         <div class="insight-icon">→</div>
         <span class="eyebrow eyebrow-light">Next best action</span>
-        <h2>Finish R3's evidence trail.</h2>
+        <h2>Finish {{ next_attention.id }}'s readiness trail.</h2>
         <p>
-            R3 is marked Complete, but it cannot count as ready until evidence is linked
-            and the open blocking feedback is resolved.
+            {{ next_attention.id }} is not ready yet. Check its status, evidence link,
+            and blocking feedback in the Requirements workspace.
         </p>
         <div class="insight-steps">
-            <div><span>1</span>Add evidence link</div>
-            <div><span>2</span>Resolve blocker</div>
-            <div><span>3</span>Recalculate readiness</div>
+            <div><span>1</span>Confirm completion status</div>
+            <div><span>2</span>Add evidence</div>
+            <div><span>3</span>Resolve blockers</div>
         </div>
+        <a class="text-action" href="{{ url_for('main.requirements', checkpoint=project.checkpoint) }}">Open requirements →</a>
+        {% else %}
+        <div class="insight-icon">✓</div>
+        <span class="eyebrow eyebrow-light">Checkpoint clear</span>
+        <h2>All required Alpha items are ready.</h2>
+        <p>No stored required item is currently blocking the readiness rule.</p>
+        {% endif %}
         <div class="insight-note">Readiness is a workflow aid, not a grade or faculty approval.</div>
     </aside>
 </section>
