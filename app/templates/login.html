@@ -3,53 +3,128 @@
 {% block title %}Sign In · CapstoneFlow{% endblock %}
 
 {% block content %}
-<section class="auth-layout">
-    <div class="auth-copy">
-        <span class="eyebrow">Fall 2026 · SENG 701</span>
-        <h1>Keep capstone work connected from requirement to evidence.</h1>
+<section class="auth-layout auth-layout-creative">
+    <div class="auth-copy auth-showcase">
+        <div class="login-orb login-orb-one"></div>
+        <div class="login-orb login-orb-two"></div>
+
+        <span class="eyebrow eyebrow-light">Fall 2026 · SENG 701</span>
+        <h1>Turn scattered capstone work into one clear flow.</h1>
         <p>
-            CapstoneFlow brings requirements, checkpoint evidence, weekly status,
-            and reviewer feedback into one reviewable workflow.
+            CapstoneFlow connects requirements, checkpoint evidence, weekly status,
+            and reviewer feedback so the next action is always visible.
         </p>
 
-        <div class="feature-list">
-            <div><strong>Traceable</strong><span>Connect each requirement to evidence and feedback.</span></div>
-            <div><strong>Explainable</strong><span>See why a checkpoint is or is not ready.</span></div>
-            <div><strong>Protected</strong><span>Project pages require an authenticated session.</span></div>
+        <div class="flow-preview" aria-label="CapstoneFlow workflow preview">
+            <div class="flow-node">
+                <span class="flow-icon">01</span>
+                <div><strong>Scope</strong><small>Define the work</small></div>
+            </div>
+            <span class="flow-line"></span>
+            <div class="flow-node">
+                <span class="flow-icon">02</span>
+                <div><strong>Requirements</strong><small>Plan & prioritize</small></div>
+            </div>
+            <span class="flow-line"></span>
+            <div class="flow-node">
+                <span class="flow-icon">03</span>
+                <div><strong>Evidence</strong><small>Prove completion</small></div>
+            </div>
+            <span class="flow-line"></span>
+            <div class="flow-node flow-node-active">
+                <span class="flow-icon">✓</span>
+                <div><strong>Ready</strong><small>Know what remains</small></div>
+            </div>
+        </div>
+
+        <div class="showcase-note">
+            <span class="pulse-dot"></span>
+            <span>Proposal-stage development build</span>
         </div>
     </div>
 
-    <div class="auth-card">
-        <span class="eyebrow">Development build</span>
-        <h2>Sign in</h2>
-        <p class="muted">Use one of the fictional demo accounts below.</p>
-
-        <form method="post" class="stack">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="username" required>
-
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required>
-
-            <button class="button button-primary button-full" type="submit">Sign In</button>
-        </form>
-
-        <div class="demo-box">
-            <strong>Student demo</strong>
-            <code>student@capstoneflow.local</code>
-            <code>Student123!</code>
+    <div class="auth-card auth-card-creative">
+        <div class="auth-card-accent"></div>
+        <div class="auth-card-header">
+            <div class="mini-brand">CF</div>
+            <div>
+                <span class="eyebrow">Welcome back</span>
+                <h2>Sign in</h2>
+            </div>
         </div>
 
-        <div class="demo-box">
-            <strong>Reviewer demo</strong>
-            <code>reviewer@capstoneflow.local</code>
-            <code>Reviewer123!</code>
+        <p class="muted">Choose a demo identity or enter the credentials manually.</p>
+
+        <form method="post" class="stack" id="loginForm">
+            <label for="email">Email</label>
+            <div class="input-shell">
+                <span class="input-glyph">@</span>
+                <input id="email" name="email" type="email" autocomplete="username" placeholder="you@capstoneflow.local" required>
+            </div>
+
+            <label for="password">Password</label>
+            <div class="input-shell">
+                <span class="input-glyph">••</span>
+                <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+            </div>
+
+            <button class="button button-primary button-full button-glow" type="submit">
+                Sign In <span aria-hidden="true">→</span>
+            </button>
+        </form>
+
+        <div class="demo-divider"><span>Quick demo access</span></div>
+
+        <div class="demo-account-grid">
+            <button
+                class="demo-account"
+                type="button"
+                data-email="student@capstoneflow.local"
+                data-password="Student123!"
+            >
+                <span class="demo-avatar">S</span>
+                <span>
+                    <strong>Student demo</strong>
+                    <small>Manage work & evidence</small>
+                    <code>student@capstoneflow.local</code>
+                    <code class="demo-password">Student123!</code>
+                </span>
+                <span class="demo-arrow">→</span>
+            </button>
+
+            <button
+                class="demo-account"
+                type="button"
+                data-email="reviewer@capstoneflow.local"
+                data-password="Reviewer123!"
+            >
+                <span class="demo-avatar reviewer-avatar">R</span>
+                <span>
+                    <strong>Reviewer demo</strong>
+                    <small>Review scope & feedback</small>
+                    <code>reviewer@capstoneflow.local</code>
+                    <code class="demo-password">Reviewer123!</code>
+                </span>
+                <span class="demo-arrow">→</span>
+            </button>
         </div>
 
         <p class="fine-print">
-            These credentials are for local development only. Production authentication
-            and university SSO are outside the current proposal scope.
+            Fictional development accounts only. Production authentication and
+            university SSO are outside the current proposal scope.
         </p>
     </div>
 </section>
+
+<script>
+document.querySelectorAll(".demo-account").forEach((account) => {
+    account.addEventListener("click", () => {
+        document.getElementById("email").value = account.dataset.email;
+        document.getElementById("password").value = account.dataset.password;
+        document.getElementById("email").focus();
+        account.classList.add("demo-selected");
+        setTimeout(() => account.classList.remove("demo-selected"), 650);
+    });
+});
+</script>
 {% endblock %}
