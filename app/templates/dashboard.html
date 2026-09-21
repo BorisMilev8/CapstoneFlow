@@ -3,97 +3,166 @@
 {% block title %}Dashboard · CapstoneFlow{% endblock %}
 
 {% block content %}
-<section class="dashboard-heading">
-    <div>
-        <span class="eyebrow">{{ project.semester }} · {{ project.checkpoint }} checkpoint</span>
-        <h1>{{ project.title }}</h1>
-        <p class="muted">A requirement-to-evidence view of current checkpoint readiness.</p>
-    </div>
-    <div class="role-pill">{{ session.get("role") }} workspace</div>
-</section>
+<section class="dashboard-hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <div class="hero-copy">
+            <div class="hero-topline">
+                <span class="hero-badge">{{ project.semester }}</span>
+                <span class="hero-badge hero-badge-soft">{{ project.checkpoint }} checkpoint</span>
+            </div>
+            <h1>{{ project.title }}</h1>
+            <p>From requirement to evidence, keep every checkpoint decision visible and explainable.</p>
 
-<section class="metric-grid">
-    <article class="metric-card">
-        <span>Checkpoint readiness</span>
-        {% if readiness.configured %}
-            <strong>{{ readiness.readiness_percent }}%</strong>
-            <small>{{ readiness.ready_count }} of {{ readiness.required_count }} required items ready</small>
-        {% else %}
-            <strong>—</strong>
-            <small>Not configured</small>
-        {% endif %}
-    </article>
-
-    <article class="metric-card">
-        <span>Missing evidence</span>
-        <strong>{{ readiness.missing_evidence_count }}</strong>
-        <small>Required items without an evidence link</small>
-    </article>
-
-    <article class="metric-card">
-        <span>Blocking feedback</span>
-        <strong>{{ readiness.blocking_feedback_count }}</strong>
-        <small>Open blockers preventing readiness</small>
-    </article>
-
-    <article class="metric-card">
-        <span>Overdue incomplete</span>
-        <strong>{{ readiness.overdue_incomplete_count }}</strong>
-        <small>Required items past due and not complete</small>
-    </article>
-</section>
-
-<section class="panel">
-    <div class="panel-heading">
-        <div>
-            <span class="eyebrow">Current scope</span>
-            <h2>Required items</h2>
+            <div class="phase-track" aria-label="Capstone phase progress">
+                <div class="phase phase-done"><span>✓</span><small>Proposal</small></div>
+                <div class="phase-connector phase-connector-done"></div>
+                <div class="phase phase-active"><span>2</span><small>Alpha</small></div>
+                <div class="phase-connector"></div>
+                <div class="phase"><span>3</span><small>Beta</small></div>
+                <div class="phase-connector"></div>
+                <div class="phase"><span>4</span><small>Final</small></div>
+            </div>
         </div>
-        <span class="status-key">Ready = Complete + evidence + no blocking feedback</span>
-    </div>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Requirement</th>
-                    <th>Status</th>
-                    <th>Evidence</th>
-                    <th>Blocking feedback</th>
-                    <th>Readiness</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                {% set is_ready = item.status == "Complete" and item.evidence_links and not item.open_blocking_feedback %}
-                <tr>
-                    <td><strong>{{ item.id }}</strong></td>
-                    <td>{{ item.title }}</td>
-                    <td><span class="tag">{{ item.status }}</span></td>
-                    <td>{{ item.evidence_links|length }}</td>
-                    <td>{{ "Open" if item.open_blocking_feedback else "None" }}</td>
-                    <td>
-                        <span class="tag {{ 'tag-ready' if is_ready else 'tag-attention' }}">
-                            {{ "Ready" if is_ready else "Needs attention" }}
-                        </span>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="readiness-card">
+            <div class="readiness-ring" style="--progress: {{ readiness.readiness_percent if readiness.configured else 0 }};">
+                <div class="readiness-center">
+                    {% if readiness.configured %}
+                        <strong>{{ readiness.readiness_percent }}%</strong>
+                        <small>ready</small>
+                    {% else %}
+                        <strong>—</strong>
+                        <small>not configured</small>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="readiness-copy">
+                <span>Checkpoint readiness</span>
+                {% if readiness.configured %}
+                    <strong>{{ readiness.ready_count }} of {{ readiness.required_count }}</strong>
+                    <small>required items currently ready</small>
+                {% else %}
+                    <strong>Not configured</strong>
+                    <small>No required items are configured.</small>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </section>
 
-<section class="panel next-panel">
+<section class="dashboard-heading dashboard-subheading">
     <div>
-        <span class="eyebrow">Next action</span>
-        <h2>Resolve R3 evidence and feedback</h2>
-        <p>
-            R3 is marked Complete, but it does not count as ready because it has no
-            evidence link and still has open blocking feedback.
-        </p>
+        <span class="eyebrow">Live checkpoint view</span>
+        <h2>Your project pulse</h2>
+        <p class="muted">The numbers below explain what is affecting readiness right now.</p>
     </div>
-    <span class="callout">The readiness percentage is a workflow aid, not a grade or faculty approval.</span>
+    <div class="role-pill"><span class="role-dot"></span>{{ session.get("role") }} workspace</div>
+</section>
+
+<section class="metric-grid creative-metrics">
+    <article class="metric-card metric-blue">
+        <div class="metric-icon">↗</div>
+        <div>
+            <span>Ready items</span>
+            <strong>{{ readiness.ready_count }}/{{ readiness.required_count }}</strong>
+            <small>Meeting the full readiness rule</small>
+        </div>
+    </article>
+
+    <article class="metric-card metric-amber">
+        <div class="metric-icon">◌</div>
+        <div>
+            <span>Missing evidence</span>
+            <strong>{{ readiness.missing_evidence_count }}</strong>
+            <small>Required items without a link</small>
+        </div>
+    </article>
+
+    <article class="metric-card metric-rose">
+        <div class="metric-icon">!</div>
+        <div>
+            <span>Blocking feedback</span>
+            <strong>{{ readiness.blocking_feedback_count }}</strong>
+            <small>Open blockers preventing readiness</small>
+        </div>
+    </article>
+
+    <article class="metric-card metric-green">
+        <div class="metric-icon">✓</div>
+        <div>
+            <span>Overdue incomplete</span>
+            <strong>{{ readiness.overdue_incomplete_count }}</strong>
+            <small>Required items past due</small>
+        </div>
+    </article>
+</section>
+
+<section class="dashboard-layout">
+    <section class="panel requirements-panel">
+        <div class="panel-heading">
+            <div>
+                <span class="eyebrow">Current scope</span>
+                <h2>Required items</h2>
+            </div>
+            <span class="status-key">
+                <span class="status-key-dot"></span>
+                Complete + evidence + no blocker
+            </span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Requirement</th>
+                        <th>Status</th>
+                        <th>Evidence</th>
+                        <th>Feedback</th>
+                        <th>Readiness</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    {% set is_ready = item.status == "Complete" and item.evidence_links and not item.open_blocking_feedback %}
+                    <tr>
+                        <td><span class="requirement-id">{{ item.id }}</span></td>
+                        <td class="requirement-title">{{ item.title }}</td>
+                        <td><span class="tag">{{ item.status }}</span></td>
+                        <td>
+                            <span class="evidence-count {{ 'evidence-zero' if item.evidence_links|length == 0 else '' }}">
+                                {{ item.evidence_links|length }}
+                            </span>
+                        </td>
+                        <td>{{ "Open" if item.open_blocking_feedback else "None" }}</td>
+                        <td>
+                            <span class="tag {{ 'tag-ready' if is_ready else 'tag-attention' }}">
+                                <span class="tag-dot"></span>
+                                {{ "Ready" if is_ready else "Needs attention" }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <aside class="insight-panel">
+        <div class="insight-icon">→</div>
+        <span class="eyebrow eyebrow-light">Next best action</span>
+        <h2>Finish R3's evidence trail.</h2>
+        <p>
+            R3 is marked Complete, but it cannot count as ready until evidence is linked
+            and the open blocking feedback is resolved.
+        </p>
+        <div class="insight-steps">
+            <div><span>1</span>Add evidence link</div>
+            <div><span>2</span>Resolve blocker</div>
+            <div><span>3</span>Recalculate readiness</div>
+        </div>
+        <div class="insight-note">Readiness is a workflow aid, not a grade or faculty approval.</div>
+    </aside>
 </section>
 {% endblock %}
