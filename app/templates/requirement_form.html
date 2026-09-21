@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form_title }} · CapstoneFlow{% endblock %}
+
+{% block content %}
+<section class="form-page-heading">
+    <div>
+        <a class="back-link" href="{{ url_for('main.requirements') }}">← Requirements</a>
+        <span class="eyebrow">Stored in SQLite</span>
+        <h1>{{ form_title }}</h1>
+        <p class="muted">Define the work clearly enough that completion can be reviewed and tested.</p>
+    </div>
+</section>
+
+<form method="post" class="requirement-form">
+    <section class="form-card">
+        <div class="form-section-heading">
+            <span class="form-step">01</span>
+            <div>
+                <h2>Requirement identity</h2>
+                <p>Give the requirement a stable ID and clear title.</p>
+            </div>
+        </div>
+
+        <div class="form-grid two-columns">
+            <div>
+                <label for="code">Requirement ID</label>
+                <input id="code" name="code" value="{{ request.form.get('code', requirement['code'] if requirement else '') }}" placeholder="R5" required>
+            </div>
+
+            <div>
+                <label for="title">Title</label>
+                <input id="title" name="title" value="{{ request.form.get('title', requirement['title'] if requirement else '') }}" placeholder="Submit a weekly status report" required>
+            </div>
+        </div>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3" placeholder="What problem or workflow does this requirement address?">{{ request.form.get('description', requirement['description'] if requirement else '') }}</textarea>
+    </section>
+
+    <section class="form-card">
+        <div class="form-section-heading">
+            <span class="form-step">02</span>
+            <div>
+                <h2>Plan and acceptance</h2>
+                <p>Connect the item to a checkpoint, priority, and testable outcome.</p>
+            </div>
+        </div>
+
+        <div class="form-grid three-columns">
+            <div>
+                <label for="checkpoint">Checkpoint</label>
+                {% set checkpoint_value = request.form.get('checkpoint', requirement['checkpoint'] if requirement else 'Alpha') %}
+                <select id="checkpoint" name="checkpoint">
+                    {% for checkpoint in checkpoints %}
+                    <option value="{{ checkpoint }}" {{ 'selected' if checkpoint_value == checkpoint else '' }}>{{ checkpoint }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="priority">Priority</label>
+                {% set priority_value = request.form.get('priority', requirement['priority'] if requirement else 'Must') %}
+                <select id="priority" name="priority">
+                    {% for priority in priorities %}
+                    <option value="{{ priority }}" {{ 'selected' if priority_value == priority else '' }}>{{ priority }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="status">Status</label>
+                {% set status_value = request.form.get('status', requirement['status'] if requirement else 'Planned') %}
+                <select id="status" name="status">
+                    {% for status in statuses %}
+                    <option value="{{ status }}" {{ 'selected' if status_value == status else '' }}>{{ status }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <label for="acceptance_criteria">Acceptance criteria</label>
+        <textarea id="acceptance_criteria" name="acceptance_criteria" rows="5" placeholder="Describe the observable result that must be true for this requirement to be accepted." required>{{ request.form.get('acceptance_criteria', requirement['acceptance_criteria'] if requirement else '') }}</textarea>
+    </section>
+
+    <section class="form-card">
+        <div class="form-section-heading">
+            <span class="form-step">03</span>
+            <div>
+                <h2>Readiness inputs</h2>
+                <p>These fields feed the explained checkpoint readiness calculation.</p>
+            </div>
+        </div>
+
+        <label for="evidence_url">Evidence URL</label>
+        <input id="evidence_url" name="evidence_url" type="url" value="{{ request.form.get('evidence_url', requirement['evidence_url'] if requirement else '') }}" placeholder="https://github.com/...">
+
+        {% set required_checked = request.form.get('required') == 'on' or (not request.form and (requirement['required'] if requirement else True)) %}
+        {% set blocker_checked = request.form.get('blocking_feedback') == 'on' or (not request.form and requirement and requirement['blocking_feedback']) %}
+        {% set overdue_checked = request.form.get('overdue') == 'on' or (not request.form and requirement and requirement['overdue']) %}
+
+        <div class="checkbox-grid">
+            <label class="check-card">
+                <input type="checkbox" name="required" {{ 'checked' if required_checked else '' }}>
+                <span>
+                    <strong>Required item</strong>
+                    <small>Include this item in readiness denominator.</small>
+                </span>
+            </label>
+
+            <label class="check-card">
+                <input type="checkbox" name="blocking_feedback" {{ 'checked' if blocker_checked else '' }}>
+                <span>
+                    <strong>Blocking feedback open</strong>
+                    <small>Prevent readiness until resolved.</small>
+                </span>
+            </label>
+
+            <label class="check-card">
+                <input type="checkbox" name="overdue" {{ 'checked' if overdue_checked else '' }}>
+                <span>
+                    <strong>Overdue</strong>
+                    <small>Flag the item as past due.</small>
+                </span>
+            </label>
+        </div>
+    </section>
+
+    <div class="form-actions">
+        <a class="button button-secondary button-link" href="{{ url_for('main.requirements') }}">Cancel</a>
+        <button class="button button-primary save-button" type="submit">Save requirement →</button>
+    </div>
+</form>
+{% endblock %}
